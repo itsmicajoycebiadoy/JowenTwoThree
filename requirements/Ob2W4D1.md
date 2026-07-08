@@ -6,28 +6,27 @@
 
 **Week:** 4 | **Day:** 1
 
-## Task: UI Error Handling (Front-End)
+## Task: Inventory Core (Back-End)
 
 ### Sub-Tasks (Breakdown)
-- Validate adjustment quantities.
-- Prevent negative stock entries.
-- Create validation error messages.
-- Handle empty search results.
-- Display user-friendly error notifications.
+- Design inventory database schema (columns: ITEM ID, NAME, CATEGORY, IN STOCK, STATUS).
+- Create inventory migration files.
+- Develop Inventory model/entity.
+- Build inventory retrieval API endpoint.
+- Implement API response formatting.
 
 ### Deliverable(s)
-- Quantity validation logic.
-- Negative stock prevention logic.
-- Validation message component.
-- Empty-state component ("No results found").
-- Error notification component.
+- Inventory database schema.
+- Inventory model/entity.
+- Inventory retrieval API endpoint.
+- Standardized API response structure.
 
 ### Test Suite / PR Acceptance Criteria
-- User receives an error message when entering invalid stock quantities.
-- User cannot save negative stock values.
-- User sees a "No Results Found" message when no products match the search.
-- User receives feedback when an action fails.
-- User cannot submit incomplete inventory adjustment forms.
+- User can view all inventory records retrieved from the system database.
+- User can see accurate product information displayed on the inventory page.
+- User can refresh the page and still view inventory data.
+- User can see current stock quantities for all products.
+- User can access inventory information without loading errors.
 
 ### Instructor Notes
 
