@@ -10,8 +10,11 @@ function computeStatus(inStock) {
 function mapInventoryRow(row) {
   const id = row.id
   const name = row.item_name
-  const category = row.category_name
+  // Supabase tests/model uses nested relationship: inventory_categories: { name }
+  const category =
+    row.category_name ?? row.inventory_categories?.name ?? row.category ?? undefined
   const inStock = Number(row.current_stock ?? row.in_stock ?? 0)
+
 
   return {
     id,
