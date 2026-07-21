@@ -15,7 +15,6 @@ function mapInventoryRow(row) {
     row.category_name ?? row.inventory_categories?.name ?? row.category ?? undefined
   const inStock = Number(row.current_stock ?? row.in_stock ?? 0)
 
-
   return {
     id,
     name,
@@ -57,11 +56,24 @@ async function listInventory({ q, category } = {}) {
   return result
 }
 
-function updateInventoryById(id, { quantity, reason, notes } = {}) {
+function createHttpError(message, statusCode) {
+  const err = new Error(message)
+  err.statusCode = statusCode
+  return err
+}
 
+function resolveInMemoryItem(id) {
   const { inventory } = require('./inventoryStore')
+  return inventory.find((it) => it.id === id)
+}
 
-  const item = inventory.find((it) => it.id === id)
+function updateInMemoryStatus(item) {
+  item.status = computeStatus(item.inStock)
+  return item
+}
+
+function updateInventoryById(id, { quantity, reason, notes } = {}) {
+  const item = resolveInMemoryItem(id)
 
   if (!item) {
     const err = new Error('Inventory item not found')
@@ -83,7 +95,40 @@ function updateInventoryById(id, { quantity, reason, notes } = {}) {
 
   const newStock = item.inStock + quantity
   item.inStock = newStock
-  item.status = computeStatus(newStock)
+  updateInMemoryStatus(item)
+
+  void notes
+
+  return item
+}
+
+function deductInventoryById(id, { quantity, reason, notes } = {}) {
+  const item = resolveInMemoryItem(id)
+
+  if (!item) {
+    throw createHttpError('Inventory item not found', 404)
+  }
+
+  if (typeof quantity !== 'number' || Number.isNaN(quantity)) {
+    throw createHttpError('`quantity` must be a number', 400)
+  }
+
+  if (quantity <= 0) {
+    throw createHttpError('`quantity` must be greater than 0', 400)
+  }
+
+  if (typeof reason !== 'string' || reason.trim() === '') {
+    throw createHttpError('`reason` must be provided', 400)
+  }
+
+  const newStock = item.inStock - quantity
+  if (newStock < 0) {
+    throw createHttpError('Insufficient stock', 409)
+  }
+
+  item.inStock = newStock
+  updateInMemoryStatus(item)
+
   void notes
 
   return item
@@ -94,4 +139,6 @@ module.exports = {
   mapInventoryRow,
   listInventory,
   updateInventoryById,
+  deductInventoryById,
 }
+
