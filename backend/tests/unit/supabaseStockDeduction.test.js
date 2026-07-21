@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, afterEach } from 'vitest'
 
-import stockDeductionService from '../../src/services/stockDeductionService'
+import stockDeductionService from "../../src/services/supabaseClientService"
 
 const { deductStockForSale } = stockDeductionService
 
