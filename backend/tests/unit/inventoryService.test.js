@@ -243,7 +243,14 @@ describe('inventoryService (unit)', () => {
 
       const result = await inventoryService.listInventory({})
 
-      expect(result).toEqual(inventoryStore.inventory)
+      const expected = inventoryStore.inventory.map((item) => ({
+        id: item.id,
+        name: item.name,
+        category: item.category,
+        inStock: item.inStock,
+        status: inventoryService.computeStatus(item.inStock),
+      }))
+      expect(result).toEqual(expected)
     })
 
     test('prefers category_name over inventory_categories.name', async () => {
