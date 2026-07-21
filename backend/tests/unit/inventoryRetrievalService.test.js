@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest'
 
-const supabaseClient = require('../../src/config/supabaseClient')
+const supabaseClient = require('../../src/services/supabaseClient')
 const { listInventory } = require('../../src/services/inventoryRetrievalService')
 
 function createListBuilder({ data = [], error = null } = {}) {

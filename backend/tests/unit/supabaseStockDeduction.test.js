@@ -36,7 +36,7 @@ describe('stockDeductionService (supabase mocked)', () => {
       }))
     }
 
-    const supabaseClient = require('../../src/services/supabaseClientService')
+    const supabaseClient = require('../../src/services/supabaseClient')
     vi.spyOn(supabaseClient, 'getSupabase').mockImplementation(() => ({
       from: () => updateBuilder,
     }))
@@ -67,7 +67,7 @@ describe('stockDeductionService (supabase mocked)', () => {
       eq: vi.fn(() => Promise.resolve({ error: null })),
     }
 
-    const supabaseClient = require('../../src/services/supabaseClientService')
+    const supabaseClient = require('../../src/services/supabaseClient')
     vi.spyOn(supabaseClient, 'getSupabase').mockReturnValue({
       from: vi.fn((table) => {
         if (table === 'inventory') return updateBuilder

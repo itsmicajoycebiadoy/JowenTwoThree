@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest'
 
-const supabaseClient = require('../../src/config/supabaseClient')
+const supabaseClient = require('../../src/services/supabaseClient')
 const { updateInventoryById } = require('../../src/services/inventoryAdjustmentService')
 
 function createFetchBuilder({ data = null, error = null } = {}) {

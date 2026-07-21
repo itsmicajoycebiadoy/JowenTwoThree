@@ -82,7 +82,11 @@ async function deductStockInSupabase({ itemId, quantity, reason, notes }) {
     throw createHttpError('Insufficient stock', 409)
   }
 
+<<<<<<< HEAD
   const supabase = require('./supabaseClientService').getSupabase()
+=======
+  const supabase = require('./supabaseClient').getSupabase()
+>>>>>>> de7bb177ad75005978e24e2b04224f616a2d364b
   const fromTable = supabase.from('inventory')
 
   // In unit tests, supabase.from(...).update(...) returns { eq: async () => ({ error: null }) }
