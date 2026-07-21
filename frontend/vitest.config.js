@@ -4,8 +4,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    // Use the Inventory app's setup file. The test suite for this repo lives under 
-    // SetupNiJoben/frontend/Inventory/src/__tests__.
+    exclude: ['**/e2e/**', '**/node_modules/**'],
     setupFiles: ['./Inventory/src/setupTests.js']
   }
 })
