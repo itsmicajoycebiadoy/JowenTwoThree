@@ -36,7 +36,28 @@ async function listInventory({ q, category } = {}) {
     console.log('err', err)
 
     const { inventory } = require('./inventoryStore')
-    return inventory
+    let result = inventory.map((item) => ({
+      id: item.id,
+      name: item.name,
+      category: item.category,
+      inStock: item.inStock,
+      status: computeStatus(item.inStock),
+    }))
+
+    if (normalizedCategory) {
+      result = result.filter((item) => item.category === normalizedCategory)
+    }
+
+    if (keyword) {
+      result = result.filter((item) => {
+        return (
+          item.name.toLowerCase().includes(keyword) ||
+          item.id.toLowerCase().includes(keyword)
+        )
+      })
+    }
+
+    return result
   }
 
   let result = rows.map(mapInventoryRow)

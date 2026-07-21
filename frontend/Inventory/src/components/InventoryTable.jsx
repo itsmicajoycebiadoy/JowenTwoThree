@@ -93,7 +93,10 @@ export default function InventoryTable({ inventory: propInventory }) {
         />
         <select
           value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
+          onChange={(e) => {
+            setSelectedCategory(e.target.value);
+            setSearchTerm('');
+          }}
           className="filter-dropdown"
           data-testid="filter-dropdown"
           aria-label="Filter by category"

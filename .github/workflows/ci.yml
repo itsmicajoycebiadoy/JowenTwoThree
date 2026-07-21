@@ -89,8 +89,47 @@ jobs:
   # ─────────────────────────────────────────────
   # 3. E2E Tests
   # ─────────────────────────────────────────────
+  e2e-tests:
+    name: "E2E Tests (Playwright)"
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-tests]
 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Install Inventory app dependencies
+        run: npm ci
+        working-directory: frontend/Inventory
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+        working-directory: frontend/Inventory
+
+      - name: Run E2E tests
+        run: npx playwright test --config=e2e/playwright.config.js
+        working-directory: frontend/Inventory
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: frontend/Inventory/e2e/playwright-report/
+          retention-days: 14
 
   # ─────────────────────────────────────────────
   # 4. Final
