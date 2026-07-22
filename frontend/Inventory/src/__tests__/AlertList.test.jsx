@@ -61,9 +61,10 @@ describe('AlertList - Ob2W3D1', () => {
   it('sorts critical alerts before warning alerts', () => {
     render(<AlertList alerts={mockAlerts} />);
     const alertItems = screen.getAllByRole('listitem');
-    expect(alertItems[0]).toHaveClass('alert-item--critical');
-    expect(alertItems[1]).toHaveClass('alert-item--critical');
-    expect(alertItems[2]).toHaveClass('alert-item--warning');
+    // Check for inline styles instead of classes
+    expect(alertItems[0]).toHaveStyle('border-left: 4px solid #dc3545');
+    expect(alertItems[1]).toHaveStyle('border-left: 4px solid #dc3545');
+    expect(alertItems[2]).toHaveStyle('border-left: 4px solid #ffc107');
   });
 
   it('has correct role for accessibility', () => {

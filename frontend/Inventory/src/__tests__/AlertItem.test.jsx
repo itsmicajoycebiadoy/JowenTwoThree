@@ -49,21 +49,23 @@ describe('AlertItem - Ob2W3D1', () => {
     render(<AlertItem alert={mockAlert} />);
     const stockBar = screen.getByTestId('alert-bar-ALERT-001');
     expect(stockBar).toBeInTheDocument();
-    // Stock is 5/10 = 50%
     expect(stockBar).toHaveStyle('width: 50%');
   });
 
-  it('applies correct severity class for critical alerts', () => {
+  it('applies correct severity style for critical alerts', () => {
     render(<AlertItem alert={mockAlert} />);
     const alertItem = screen.getByTestId('alert-item-ALERT-001');
-    expect(alertItem).toHaveClass('alert-item--critical');
+    // Check for inline styles instead of classes
+    expect(alertItem).toHaveStyle('border-left: 4px solid #dc3545');
+    expect(alertItem).toHaveStyle('background: #fff5f5');
   });
 
-  it('applies correct severity class for warning alerts', () => {
+  it('applies correct severity style for warning alerts', () => {
     const warningAlert = { ...mockAlert, severity: 'warning' };
     render(<AlertItem alert={warningAlert} />);
     const alertItem = screen.getByTestId('alert-item-ALERT-001');
-    expect(alertItem).toHaveClass('alert-item--warning');
+    expect(alertItem).toHaveStyle('border-left: 4px solid #ffc107');
+    expect(alertItem).toHaveStyle('background: #fffbf0');
   });
 
   it('renders reorder button', () => {
@@ -82,7 +84,6 @@ describe('AlertItem - Ob2W3D1', () => {
   it('calculates stock percentage correctly', () => {
     render(<AlertItem alert={mockAlert} />);
     const stockBar = screen.getByTestId('alert-bar-ALERT-001');
-    // 5/10 = 0.5 = 50%
     expect(stockBar).toHaveStyle('width: 50%');
   });
 
@@ -90,7 +91,6 @@ describe('AlertItem - Ob2W3D1', () => {
     const overThresholdAlert = { ...mockAlert, currentStock: 15, threshold: 10 };
     render(<AlertItem alert={overThresholdAlert} />);
     const stockBar = screen.getByTestId('alert-bar-ALERT-001');
-    // Should be clamped to 100%
     expect(stockBar).toHaveStyle('width: 100%');
   });
 });

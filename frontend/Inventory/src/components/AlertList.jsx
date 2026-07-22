@@ -1,11 +1,12 @@
+// src/components/AlertList.jsx
 import React from 'react';
 import AlertItem from './AlertItem';
 
 export default function AlertList({ alerts }) {
   if (!alerts || alerts.length === 0) {
     return (
-      <div className="alert-empty-state" data-testid="alert-empty-state">
-        <p>No inventory alerts at this time</p>
+      <div data-testid="alert-empty-state" style={{ textAlign: 'center', padding: '40px 20px', color: '#999' }}>
+        <p style={{ margin: 0, fontSize: '16px' }}>No inventory alerts at this time</p>
       </div>
     );
   }
@@ -18,10 +19,10 @@ export default function AlertList({ alerts }) {
   });
 
   return (
-    <div className="alert-list" role="list" data-testid="alert-list">
+    <div role="list" data-testid="alert-list">
       {sortedAlerts.map((alert) => (
         <AlertItem key={alert.id} alert={alert} />
       ))}
     </div>
   );
-};
+}

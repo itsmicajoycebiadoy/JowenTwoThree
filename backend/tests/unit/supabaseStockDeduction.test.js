@@ -1,8 +1,6 @@
 import { describe, test, expect, vi, afterEach } from 'vitest'
 
-import stockDeductionService from '../../src/services/stockDeductionService'
-
-const { deductStockForSale } = stockDeductionService
+const { deductStockForSale } = require('../../src/services/stockDeductionService')
 
 function createQueryBuilderMock({ data, error }) {
   const builder = {
@@ -36,7 +34,7 @@ describe('stockDeductionService (supabase mocked)', () => {
       }))
     }
 
-    const supabaseClient = require('../../src/services/supabaseClient')
+    const supabaseClient = require('../../src/services/supabaseClientService')
     vi.spyOn(supabaseClient, 'getSupabase').mockImplementation(() => ({
       from: () => updateBuilder,
     }))
@@ -67,7 +65,7 @@ describe('stockDeductionService (supabase mocked)', () => {
       eq: vi.fn(() => Promise.resolve({ error: null })),
     }
 
-    const supabaseClient = require('../../src/services/supabaseClient')
+    const supabaseClient = require('../../src/services/supabaseClientService')
     vi.spyOn(supabaseClient, 'getSupabase').mockReturnValue({
       from: vi.fn((table) => {
         if (table === 'inventory') return updateBuilder

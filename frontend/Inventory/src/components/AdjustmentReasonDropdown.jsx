@@ -1,14 +1,24 @@
+// src/components/AdjustmentReasonDropdown.jsx
 import React from 'react';
 
-const ADJUSTMENT_REASONS = [
+export const ADJUSTMENT_REASONS = [
+  { value: '', label: 'Select reason...' },
   { value: 'Restock', label: 'Restock' },
+  { value: 'Sale', label: 'Sale' },
   { value: 'Damaged', label: 'Damaged' },
-  { value: 'InventoryCount', label: 'Inventory Count' },
-  { value: 'Expiration', label: 'Expiration' },
-  { value: 'Theft', label: 'Theft' },
+  { value: 'Return', label: 'Return' },
+  { value: 'Inventory Count', label: 'Inventory Count' },
+  { value: 'Expired', label: 'Expired' },
+  { value: 'Transfer', label: 'Transfer' },
+  { value: 'Other', label: 'Other' },
 ];
 
-export default function AdjustmentReasonDropdown({ value, onChange, label = 'Adjustment Reason' }) {
+export default function AdjustmentReasonDropdown({
+  value,
+  onChange,
+  label = 'Adjustment Reason',
+  disabled = false
+}) {
   return (
     <div className="reason-dropdown-group" data-testid="reason-dropdown-group">
       <label htmlFor="reason-select" className="reason-label">
@@ -16,13 +26,13 @@ export default function AdjustmentReasonDropdown({ value, onChange, label = 'Adj
       </label>
       <select
         id="reason-select"
+        className="reason-select"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="reason-select"
+        disabled={disabled}
         data-testid="reason-select"
         aria-label="Select adjustment reason"
       >
-        <option value="">-- Select a reason --</option>
         {ADJUSTMENT_REASONS.map((reason) => (
           <option key={reason.value} value={reason.value}>
             {reason.label}
@@ -31,6 +41,4 @@ export default function AdjustmentReasonDropdown({ value, onChange, label = 'Adj
       </select>
     </div>
   );
-}
-
-export { ADJUSTMENT_REASONS };
+} 

@@ -1,4 +1,117 @@
+// src/components/AlertItem.jsx
 import React from 'react';
+
+const styles = {
+  alertItem: {
+    border: '1px solid #e0e0e0',
+    borderRadius: '8px',
+    padding: '14px 16px',
+    marginBottom: '12px',
+    background: '#fafafa',
+    transition: 'all 0.2s',
+  },
+  alertItemCritical: {
+    borderLeft: '4px solid #dc3545',
+    background: '#fff5f5',
+  },
+  alertItemWarning: {
+    borderLeft: '4px solid #ffc107',
+    background: '#fffbf0',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '6px',
+  },
+  title: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  product: {
+    fontWeight: 600,
+    color: '#333',
+    fontSize: '15px',
+  },
+  timestamp: {
+    fontSize: '12px',
+    color: '#999',
+  },
+  message: {
+    margin: '6px 0 10px 0',
+    fontSize: '14px',
+    color: '#555',
+  },
+  details: {
+    display: 'flex',
+    gap: '20px',
+    fontSize: '13px',
+    color: '#666',
+    marginBottom: '8px',
+  },
+  detail: {
+    display: 'flex',
+    gap: '4px',
+  },
+  label: {
+    fontWeight: 500,
+    color: '#888',
+  },
+  value: {
+    color: '#333',
+  },
+  stockInfo: {
+    marginBottom: '10px',
+  },
+  stockBarContainer: {
+    width: '100%',
+  },
+  stockBarLabel: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    fontSize: '12px',
+    color: '#666',
+    marginBottom: '4px',
+  },
+  currentStock: {
+    fontWeight: 500,
+  },
+  stockBar: {
+    width: '100%',
+    height: '6px',
+    background: '#e0e0e0',
+    borderRadius: '3px',
+    overflow: 'hidden',
+  },
+  stockBarFill: {
+    height: '100%',
+    borderRadius: '3px',
+    transition: 'width 0.3s ease',
+  },
+  stockBarFillCritical: {
+    background: '#dc3545',
+  },
+  stockBarFillWarning: {
+    background: '#ffc107',
+  },
+  actions: {
+    display: 'flex',
+    gap: '8px',
+    marginTop: '4px',
+  },
+  actionBtn: {
+    padding: '6px 16px',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontWeight: 500,
+    fontSize: '13px',
+    transition: 'all 0.2s',
+    background: '#007bff',
+    color: 'white',
+  },
+};
 
 export default function AlertItem({ alert }) {
   const formatTime = (timestamp) => {
@@ -11,63 +124,79 @@ export default function AlertItem({ alert }) {
     return `${Math.floor(diffInMinutes / 1440)}d ago`;
   };
 
-  const stockPercentage = (alert.currentStock / alert.threshold) * 100;
+  const stockPercentage = Math.min((alert.currentStock / alert.threshold) * 100, 100);
+
+  const getAlertStyle = () => {
+    if (alert.severity === 'critical') {
+      return { ...styles.alertItem, ...styles.alertItemCritical };
+    }
+    if (alert.severity === 'warning') {
+      return { ...styles.alertItem, ...styles.alertItemWarning };
+    }
+    return styles.alertItem;
+  };
+
+  const getBarFillStyle = () => {
+    if (alert.severity === 'critical') {
+      return { ...styles.stockBarFill, ...styles.stockBarFillCritical };
+    }
+    return { ...styles.stockBarFill, ...styles.stockBarFillWarning };
+  };
 
   return (
     <div
-      className={`alert-item alert-item--${alert.severity}`}
+      style={getAlertStyle()}
       role="listitem"
       data-testid={`alert-item-${alert.id}`}
     >
-      <div className="alert-item-header">
-        <div className="alert-item-title">
-          <span className={`alert-severity-badge alert-severity-badge--${alert.severity}`}>
+      <div style={styles.header}>
+        <div style={styles.title}>
+          <span style={{ fontSize: '16px' }}>
             {alert.severity === 'critical' ? '🔴' : '🟡'}
           </span>
-          <span className="alert-item-product" data-testid={`alert-product-${alert.id}`}>
+          <span style={styles.product} data-testid={`alert-product-${alert.id}`}>
             {alert.itemName}
           </span>
         </div>
-        <span className="alert-timestamp" data-testid={`alert-time-${alert.id}`}>
+        <span style={styles.timestamp} data-testid={`alert-time-${alert.id}`}>
           {formatTime(alert.timestamp)}
         </span>
       </div>
 
-      <p className="alert-message" data-testid={`alert-message-${alert.id}`}>
+      <p style={styles.message} data-testid={`alert-message-${alert.id}`}>
         {alert.message}
       </p>
 
-      <div className="alert-item-details">
-        <div className="alert-detail">
-          <span className="label">Item ID:</span>
-          <span className="value" data-testid={`alert-itemid-${alert.id}`}>
+      <div style={styles.details}>
+        <div style={styles.detail}>
+          <span style={styles.label}>Item ID:</span>
+          <span style={styles.value} data-testid={`alert-itemid-${alert.id}`}>
             {alert.itemId}
           </span>
         </div>
-        <div className="alert-detail">
-          <span className="label">Category:</span>
-          <span className="value" data-testid={`alert-category-${alert.id}`}>
-            {/* Category can be derived from itemId if needed */}
+        <div style={styles.detail}>
+          <span style={styles.label}>Category:</span>
+          <span style={styles.value} data-testid={`alert-category-${alert.id}`}>
             {alert.category || 'General'}
           </span>
         </div>
       </div>
 
-      <div className="alert-stock-info">
-        <div className="stock-bar-container">
-          <div className="stock-bar-label">
-            <span className="current-stock" data-testid={`alert-current-${alert.id}`}>
+      <div style={styles.stockInfo}>
+        <div style={styles.stockBarContainer}>
+          <div style={styles.stockBarLabel}>
+            <span style={styles.currentStock} data-testid={`alert-current-${alert.id}`}>
               Current: {alert.currentStock} units
             </span>
-            <span className="threshold-stock">
+            <span>
               Threshold: {alert.threshold} units
             </span>
           </div>
-          <div className="stock-bar">
+          <div style={styles.stockBar}>
             <div
-              className={`stock-bar-fill stock-bar-fill--${alert.severity}`}
               style={{
-                width: `${Math.min(stockPercentage, 100)}%`,
+                ...getBarFillStyle(),
+                width: `${stockPercentage}%`,
               }}
               data-testid={`alert-bar-${alert.id}`}
             />
@@ -75,9 +204,9 @@ export default function AlertItem({ alert }) {
         </div>
       </div>
 
-      <div className="alert-actions">
+      <div style={styles.actions}>
         <button
-          className="alert-action-btn alert-action-btn--primary"
+          style={styles.actionBtn}
           data-testid={`alert-reorder-${alert.id}`}
           aria-label={`Reorder ${alert.itemName}`}
         >
@@ -86,4 +215,4 @@ export default function AlertItem({ alert }) {
       </div>
     </div>
   );
-};
+}

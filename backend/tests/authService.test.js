@@ -1,5 +1,15 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest'
 
+const mockedUsers = [
+  {
+    id: '1',
+    username: 'admin',
+    email: 'admin@jowen.com',
+    password: 'admin123',
+    role: 'admin',
+    fullName: 'Admin User'
+  }
+]
 
 vi.mock('../src/models/mockUsers', () => {
   return {

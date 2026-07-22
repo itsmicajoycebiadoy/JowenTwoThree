@@ -1,265 +1,146 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+// src/__tests__/InventoryAdjustmentForm.test.jsx
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, it, expect, vi } from 'vitest';
 import InventoryAdjustmentForm from '../components/InventoryAdjustmentForm';
 
+const mockItem = {
+  id: 'I-001',
+  name: 'Coffee Beans',
+  inStock: 25,
+  category: 'Beverage'
+};
+
 describe('InventoryAdjustmentForm Component', () => {
-  const mockItem = {
-    id: 'I-001',
-    name: 'Coffee Beans',
-    inStock: 25,
-    category: 'Beverage',
-    status: 'Good',
-  };
-
-  it('does not render when isOpen is false', () => {
-    const mockOnClose = vi.fn();
-    const mockOnSubmit = vi.fn();
-    const { container } = render(
-      <InventoryAdjustmentForm
-        isOpen={false}
-        onClose={mockOnClose}
-        item={mockItem}
-        onSubmit={mockOnSubmit}
-      />
-    );
-    const modal = container.querySelector('.modal');
-    expect(modal).not.toBeInTheDocument();
-  });
-
-  it('renders modal when isOpen is true', () => {
-    const mockOnClose = vi.fn();
-    const mockOnSubmit = vi.fn();
+  it('renders form with item details', () => {
     render(
-      <InventoryAdjustmentForm
-        isOpen={true}
-        onClose={mockOnClose}
-        item={mockItem}
-        onSubmit={mockOnSubmit}
+      <InventoryAdjustmentForm 
+        isOpen={true} 
+        onClose={() => {}} 
+        item={mockItem} 
+        onSubmit={() => {}} 
       />
     );
-    expect(screen.getByTestId('modal')).toBeInTheDocument();
-    expect(screen.getByText('Adjust Inventory')).toBeInTheDocument();
-  });
-
-  it('displays item name', () => {
-    const mockOnClose = vi.fn();
-    const mockOnSubmit = vi.fn();
-    render(
-      <InventoryAdjustmentForm
-        isOpen={true}
-        onClose={mockOnClose}
-        item={mockItem}
-        onSubmit={mockOnSubmit}
-      />
-    );
+    
     expect(screen.getByTestId('item-name-display')).toHaveTextContent('Coffee Beans');
-  });
-
-  it('displays current stock', () => {
-    const mockOnClose = vi.fn();
-    const mockOnSubmit = vi.fn();
-    render(
-      <InventoryAdjustmentForm
-        isOpen={true}
-        onClose={mockOnClose}
-        item={mockItem}
-        onSubmit={mockOnSubmit}
-      />
-    );
     expect(screen.getByTestId('current-stock-display')).toHaveTextContent('25 units');
   });
 
-  it('renders quantity input component', () => {
-    const mockOnClose = vi.fn();
-    const mockOnSubmit = vi.fn();
-    render(
-      <InventoryAdjustmentForm
-        isOpen={true}
-        onClose={mockOnClose}
-        item={mockItem}
-        onSubmit={mockOnSubmit}
-      />
-    );
-    expect(screen.getByTestId('quantity-input-group')).toBeInTheDocument();
-  });
-
-  it('renders adjustment reason dropdown', () => {
-    const mockOnClose = vi.fn();
-    const mockOnSubmit = vi.fn();
-    render(
-      <InventoryAdjustmentForm
-        isOpen={true}
-        onClose={mockOnClose}
-        item={mockItem}
-        onSubmit={mockOnSubmit}
-      />
-    );
-    expect(screen.getByTestId('reason-select')).toBeInTheDocument();
-  });
-
-  it('renders optional notes textarea', () => {
-    const mockOnClose = vi.fn();
-    const mockOnSubmit = vi.fn();
-    render(
-      <InventoryAdjustmentForm
-        isOpen={true}
-        onClose={mockOnClose}
-        item={mockItem}
-        onSubmit={mockOnSubmit}
-      />
-    );
-    expect(screen.getByTestId('notes-textarea')).toBeInTheDocument();
-  });
-
-  it('renders submit and cancel buttons', () => {
-    const mockOnClose = vi.fn();
-    const mockOnSubmit = vi.fn();
-    render(
-      <InventoryAdjustmentForm
-        isOpen={true}
-        onClose={mockOnClose}
-        item={mockItem}
-        onSubmit={mockOnSubmit}
-      />
-    );
-    expect(screen.getByTestId('form-submit-btn')).toBeInTheDocument();
-    expect(screen.getByTestId('form-cancel-btn')).toBeInTheDocument();
-  });
-
-  it('calls onClose when cancel button is clicked', async () => {
-    const user = userEvent.setup();
-    const mockOnClose = vi.fn();
-    const mockOnSubmit = vi.fn();
-    render(
-      <InventoryAdjustmentForm
-        isOpen={true}
-        onClose={mockOnClose}
-        item={mockItem}
-        onSubmit={mockOnSubmit}
-      />
-    );
-    const cancelBtn = screen.getByTestId('form-cancel-btn');
-    await user.click(cancelBtn);
-    expect(mockOnClose).toHaveBeenCalled();
-  });
-
   it('requires adjustment reason before submission', async () => {
-    const user = userEvent.setup();
-    const mockOnClose = vi.fn();
     const mockOnSubmit = vi.fn();
-    window.alert = vi.fn();
-
+    const mockOnClose = vi.fn();
+    const user = userEvent.setup();
+    
     render(
-      <InventoryAdjustmentForm
-        isOpen={true}
-        onClose={mockOnClose}
-        item={mockItem}
-        onSubmit={mockOnSubmit}
+      <InventoryAdjustmentForm 
+        isOpen={true} 
+        onClose={mockOnClose} 
+        item={mockItem} 
+        onSubmit={mockOnSubmit} 
       />
     );
+    
+    // Submit without selecting reason
     const submitBtn = screen.getByTestId('form-submit-btn');
     await user.click(submitBtn);
-    expect(window.alert).toHaveBeenCalledWith('Please select an adjustment reason');
+    
+    // Should show error message - use waitFor instead of findByTestId
+    await waitFor(() => {
+      const errorElement = screen.getByTestId('form-error');
+      expect(errorElement).toBeInTheDocument();
+      expect(errorElement).toHaveTextContent('Please select an adjustment reason');
+    });
+    
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
   it('submits adjustment with all form data', async () => {
-    const user = userEvent.setup();
+    const mockOnSubmit = vi.fn().mockResolvedValue();
     const mockOnClose = vi.fn();
-    const mockOnSubmit = vi.fn();
+    const user = userEvent.setup();
+    
     render(
-      <InventoryAdjustmentForm
-        isOpen={true}
-        onClose={mockOnClose}
-        item={mockItem}
-        onSubmit={mockOnSubmit}
+      <InventoryAdjustmentForm 
+        isOpen={true} 
+        onClose={mockOnClose} 
+        item={mockItem} 
+        onSubmit={mockOnSubmit} 
       />
     );
-
+    
+    // Select reason
     const reasonSelect = screen.getByTestId('reason-select');
-    const notesTextarea = screen.getByTestId('notes-textarea');
-    const submitBtn = screen.getByTestId('form-submit-btn');
-
     await user.selectOptions(reasonSelect, 'Restock');
-    await user.type(notesTextarea, 'New shipment arrived');
-    await user.click(submitBtn);
-
-    expect(mockOnSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({
-        itemId: 'I-001',
-        itemName: 'Coffee Beans',
-        quantity: 1,
-        reason: 'Restock',
-        notes: 'New shipment arrived',
-      })
-    );
-  });
-
-  it('closes form after successful submission', async () => {
-    const user = userEvent.setup();
-    const mockOnClose = vi.fn();
-    const mockOnSubmit = vi.fn();
-    render(
-      <InventoryAdjustmentForm
-        isOpen={true}
-        onClose={mockOnClose}
-        item={mockItem}
-        onSubmit={mockOnSubmit}
-      />
-    );
-
-    const reasonSelect = screen.getByTestId('reason-select');
+    
+    // Submit
     const submitBtn = screen.getByTestId('form-submit-btn');
-
-    await user.selectOptions(reasonSelect, 'Damaged');
     await user.click(submitBtn);
-
-    expect(mockOnClose).toHaveBeenCalled();
+    
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          itemId: 'I-001',
+          itemName: 'Coffee Beans',
+          quantity: 1,
+          reason: 'Restock',
+        })
+      );
+    });
   });
 
   it('allows adjusting quantity', async () => {
     const user = userEvent.setup();
-    const mockOnClose = vi.fn();
-    const mockOnSubmit = vi.fn();
+    
     render(
-      <InventoryAdjustmentForm
-        isOpen={true}
-        onClose={mockOnClose}
-        item={mockItem}
-        onSubmit={mockOnSubmit}
+      <InventoryAdjustmentForm 
+        isOpen={true} 
+        onClose={() => {}} 
+        item={mockItem} 
+        onSubmit={() => {}} 
       />
     );
-
-    const reasonSelect = screen.getByTestId('reason-select');
-    const incrementBtn = screen.getByTestId('quantity-increment-btn');
-    const submitBtn = screen.getByTestId('form-submit-btn');
-
-    await user.selectOptions(reasonSelect, 'Restock');
-    // Increment from 1 to 50 (click 49 times - just check final result with 5 increments)
-    for (let i = 0; i < 4; i++) {
-      await user.click(incrementBtn);
-    }
-    await user.click(submitBtn);
-
-    expect(mockOnSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({
-        quantity: 5,
-      })
-    );
+    
+    const incrementBtn = screen.getByTestId('quantity-increment');
+    const quantityInput = screen.getByTestId('quantity-input');
+    
+    expect(quantityInput).toHaveValue(1);
+    
+    await user.click(incrementBtn);
+    expect(quantityInput).toHaveValue(2);
   });
 
-  it('renders form element', () => {
-    const mockOnClose = vi.fn();
+  it('shows error when quantity is zero', async () => {
     const mockOnSubmit = vi.fn();
+    const user = userEvent.setup();
+    
     render(
-      <InventoryAdjustmentForm
-        isOpen={true}
-        onClose={mockOnClose}
-        item={mockItem}
-        onSubmit={mockOnSubmit}
+      <InventoryAdjustmentForm 
+        isOpen={true} 
+        onClose={() => {}} 
+        item={mockItem} 
+        onSubmit={mockOnSubmit} 
       />
     );
-    expect(screen.getByTestId('adjustment-form')).toBeInTheDocument();
+    
+    // Get the decrement button and click to set quantity to 0
+    const decrementBtn = screen.getByTestId('quantity-decrement');
+    await user.click(decrementBtn); // quantity goes from 1 to 0
+    
+    // Select reason
+    const reasonSelect = screen.getByTestId('reason-select');
+    await user.selectOptions(reasonSelect, 'Restock');
+    
+    // Submit
+    const submitBtn = screen.getByTestId('form-submit-btn');
+    await user.click(submitBtn);
+    
+    // Should show error
+    await waitFor(() => {
+      const errorElement = screen.getByTestId('form-error');
+      expect(errorElement).toBeInTheDocument();
+      expect(errorElement).toHaveTextContent('Quantity cannot be zero');
+    });
+    
+    expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 });

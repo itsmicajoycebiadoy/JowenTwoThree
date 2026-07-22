@@ -1,4 +1,4 @@
-const client = require('./supabaseClient')
+const client = require('./supabaseClientService')
 
 function requireSupabase() {
   if (!client.supabase) {

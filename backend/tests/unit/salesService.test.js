@@ -1,3 +1,5 @@
+import { describe, it, expect } from "vitest"
+
 const { getSalesData } = require("../../src/services/salesService")
 
 describe("Sales Service", () => {
